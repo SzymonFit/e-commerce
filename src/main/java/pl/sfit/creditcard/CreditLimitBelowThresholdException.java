@@ -1,4 +1,5 @@
 package pl.sfit.creditcard;
 
-public class CreditLimitBelowThresholdException {
+public class CreditLimitBelowThresholdException extends IllegalStateException {
+
 }
