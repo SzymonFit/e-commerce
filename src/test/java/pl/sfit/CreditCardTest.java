@@ -1,6 +1,7 @@
 package pl.sfit;
 
 import org.junit.jupiter.api.Test;
+import pl.sfit.creditcard.CreditAssignedTwiceException;
 import pl.sfit.creditcard.CreditCard;
 import pl.sfit.creditcard.CreditLimitBelowThresholdException;
 
@@ -51,6 +52,30 @@ public class CreditCardTest {
 
         assertDoesNotThrow(
                () -> card.assignCredit((BigDecimal.valueOf(100))));
+    }
+
+    @Test
+    void itDenyToAssignLimitTwice() {
+        CreditCard card = new CreditCard("1234-4567");
+        card.assignCredit(BigDecimal.valueOf(1000));
+
+        assertThrows(
+                CreditAssignedTwiceException.class,
+                () -> card.assignCredit(BigDecimal.valueOf(1100))
+        );
+    }
+    @Test
+    void itAllowsToWithdraw(){
+        CreditCard card = new CreditCard("1234-4567");
+        //Arrange
+        card.assignCredit(BigDecimal.valueOf(1000));
+        card.assignLimit(BigDecimal.valueOf(600));
+        //Act
+        card.withdrawMoney(BigDecimal.valueOf(100));
+        //Assert
+        assertEquals(BigDecimal.valueOf(900), card.getBalance());
+
+
     }
 //    @Test
 //    void checkDoublesAndFloats(){
