@@ -2,12 +2,12 @@ package pl.sfit.productcatalog;
 
 import java.util.List;
 
-public interface ProductStorage {
+public interface SqlProductStorage {
     List<Product> allProducts();
 
     void add(Product newOne);
 
     List<Product> allPublishedProducts();
 
-    Product loadById(String productdId);
+    Product loadById(String productId);
 }

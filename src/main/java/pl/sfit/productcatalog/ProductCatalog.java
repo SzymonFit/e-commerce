@@ -1,41 +1,51 @@
 package pl.sfit.productcatalog;
 
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import java.math.BigDecimal;
+import java.util.*;
 
 public class ProductCatalog {
+    // Business
+    // Technical
+    private ProductStorage productStorage;
 
-    private Map<String, Product> products;
-
-    public ProductCatalog() {
-        this.productStorage = new HashMapProductStorage();
-    }
-
-    public String addProduct(String s, String nice_one) {
+    public ProductCatalog(ProductStorage productStorage) {
+        this.productStorage = productStorage;
     }
 
     public List<Product> allProducts() {
+        return productStorage.allProducts();
     }
 
-    public List<Product> allPublishedProducts() {
-        return Collections.emptyList();
+    public String addProduct(String name, String desc) {
+        Product newOne = new Product(
+                UUID.randomUUID(),
+                name,
+                desc
+        );
+
+        productStorage.add(newOne);
+
+        return newOne.getId();
     }
 
     public Product loadById(String productId) {
-        return products.get(productId);
+        return productStorage.loadById(productId);
     }
 
     public void changePrice(String productId, BigDecimal newPrice) {
-        Product loaded = this.loadById(productId);
-        loaded.changePrice(newPrice);
+        Product product = loadById(productId);
+
+        product.changePrice(newPrice);
     }
 
     public void assignImage(String productId, String imageKey) {
+        Product product = loadById(productId);
 
-
+        product.setImage(imageKey);
     }
 
     public void publishProduct(String productId) {
@@ -52,5 +62,8 @@ public class ProductCatalog {
         product.setOnline(true);
     }
 
-}
+    public List<Product> allPublishedProducts() {
+        return productStorage.allPublishedProducts();
+    }
+
 }

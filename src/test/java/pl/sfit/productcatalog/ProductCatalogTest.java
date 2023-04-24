@@ -6,45 +6,58 @@ import java.math.BigDecimal;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.math.BigDecimal;
+import java.util.List;
+
 public class ProductCatalogTest {
 
     @Test
-    void itExposeEmptyProductsList(){
-        ProductCatalog catalog = thereIsProductCatalog();
-        List<Product> products = catalog.allProducts();
-        assertEmptyList(products);
-    }
-
-    private void assertEmptyList(List<Product> products) {
-        assert 0 == products.size();
-    }
-
-    @Test
-    void itAllowsToAddProduct(){
+    void itAllowsToListMyProducts() {
         //Arrange
         ProductCatalog catalog = thereIsProductCatalog();
         //Act
-        String productId = catalog.addProduct("Lego 8398", "nice one");
+        List<Product> products = catalog.allProducts();
+        //Assert
+        assertListIsEmpty(products);
+    }
+
+    @Test
+    void itAllowsToAddProduct() {
+        //Arrange
+        ProductCatalog catalog = thereIsProductCatalog();
+        //Act
+        String productId = catalog.addProduct("lego set 8083", "nice one");
+
         //Assert
         List<Product> products = catalog.allProducts();
         assert 1 == products.size();
     }
 
-    private ProductCatalog thereIsProductCatalog() {
+    @Test
+    void itAllowsToLoadProductDetails() {
+        ProductCatalog catalog = thereIsProductCatalog();
 
-        return new ProductCatalog(
-                new HashMapProductStorage();
-        );
+        String productId = catalog.addProduct("lego set 8083", "nice one");
+
+        Product loadedProduct = catalog.loadById(productId);
+        assert loadedProduct.getId().equals(productId);
+        assert loadedProduct.getName().equals("lego set 8083");
     }
 
     @Test
-    void itAllowsToChangePrice(){
+    void itAllowsToChangePrice() {
         ProductCatalog catalog = thereIsProductCatalog();
-        String productId = catalog.addProduct("Lego 8398", "nice one");
+        String productId = catalog.addProduct("lego set 8083", "nice one");
+
         catalog.changePrice(productId, BigDecimal.valueOf(20.20));
-        Product loaded = catalog.loadById(productId);
-        assertEquals(BigDecimal.valueOf(20.20),  loaded.getPrice());
+
+        Product loadedProduct = catalog.loadById(productId);
+        assertEquals(BigDecimal.valueOf(20.20), loadedProduct.getPrice());
     }
+
     @Test
     void itAllowsToAssignImage() {
         ProductCatalog catalog = thereIsProductCatalog();
@@ -71,21 +84,34 @@ public class ProductCatalogTest {
     }
 
     @Test
-    void publishedProductsAreEmptyForNewCatalog(){
+    void draftProductsAreNotListedForBeingSold() {
         ProductCatalog catalog = thereIsProductCatalog();
-        List<Product> products = catalog.allPublishedProducts();
-        assert 1 = products.size();
-    }
+        String productId = catalog.addProduct("lego set 8083", "nice one");
 
+        List<Product> publishedProducts = catalog.allPublishedProducts();
+        assertEquals(0, publishedProducts.size());
+    }
 
     @Test
-    void itAllowsToLoadProductDetails(){
+    void publicationIsPossibleWhenPriceAndImageAreDefined() {
         ProductCatalog catalog = thereIsProductCatalog();
-        String productId = catalog.addProduct("Lego 8398", "nice one");
+        String productId = catalog.addProduct("lego set 8083", "nice one");
 
-        Product loaded = catalog.loadById(productId);
-        assert productId.equals(loaded.getId);
+        assertThrows(
+                ProductCantBePublishedException.class,
+                () -> catalog.publishProduct(productId)
+        );
+
+
     }
-//    @Test
-//    void productCantBePublishedWithout
+
+    private ProductCatalog thereIsProductCatalog() {
+        return new ProductCatalog(
+                new HashMapProductStorage()
+        );
+    }
+
+    private void assertListIsEmpty(List<Product> products) {
+        assert 0 == products.size();
+    }
 }
