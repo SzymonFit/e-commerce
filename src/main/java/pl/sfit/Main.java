@@ -5,6 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import pl.sfit.productcatalog.HashMapProductStorage;
 import pl.sfit.productcatalog.ProductCatalog;
+import pl.sfit.sales.CartStorage;
+import pl.sfit.sales.ProductDetailsProvider;
+import pl.sfit.sales.Sales;
 
 import java.math.BigDecimal;
 
@@ -23,4 +26,12 @@ public class Main {
         productCatalog.publishProduct(product1);
         return productCatalog;
     }
+
+
+    @Bean
+    Sales createSales() {
+        return new Sales(new CartStorage(), new ProductDetailsProvider());
+    }
+
+
 }

@@ -10,7 +10,7 @@ public class CollectingProductsTest {
         //ARRANGE
         Sales sales = thereIsSalesModule();
         String product1 = thereIsProduct();
-        String customerId = thereIsCustomer("Kuba");
+        String customerId = thereIsCustomer("Szymon");
 
         //Act
         sales.addToCart(customerId, product1);
@@ -32,6 +32,6 @@ public class CollectingProductsTest {
     }
 
     private Sales thereIsSalesModule() {
-        return new Sales();
+        return new Sales(cartStorage, productDetailsProvider);
     }
 }
